@@ -55,10 +55,11 @@
 
 	// Output test
 
-	var className = {className: "react", id: "react-native"};
+	var className = {className: "react", htmlFor: "react-native", onClick: function() {return 'hello';}};
 	var child1 = React.createElement('li', null, 'Welcome to the world of React');
 	var child2 = React.createElement('li', null, 'Build Resuable components');
 	var root = React.createElement('h1', className, child1, child2);
+	console.log(root);
 	render(root, document.getElementById('example'));
 
 
@@ -85,8 +86,29 @@
 	};
 
 	var createElement = function(tag, props, ...args){
-	  return "<" + tag + getAttributes(props) + ">" + fetchChildren(args) + "</" + tag + ">";
+	  return "<" + tag + getAttributes(transformAttr(props)) + ">" + fetchChildren(args) + "</" + tag + ">";
 	};
+
+	var transformAttr = function(attr){
+	  result = attr;
+	  for(var key in result){
+	    if(key === 'className'){
+	      result['class'] = result[key];
+	      delete result[key];
+	    }
+	    else if (key === 'htmlFor') {
+	      result['for'] = result[key];
+	      delete result[key];
+	    }
+	    else if (key === 'onClick'){
+	      result['on-click'] = result[key];
+	      delete result[key];
+	    }
+	  }
+	  return result;
+	};
+
+
 
 	module.exports = {
 	  createElement: createElement
